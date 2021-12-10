@@ -28,7 +28,7 @@ app.get('/ranking', (req, res) => {
     })
     );
 })
-
+ 
 function calculate(req, res) {
 
     console.log("Calculating...");
