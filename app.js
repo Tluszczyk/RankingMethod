@@ -45,6 +45,7 @@ function calculate(req, res) {
         RANKING = JSON.parse(String(data).replace(/'/g, '"'));
         res.redirect('/ranking');
     });
+    res.redirect('/');
 };
 
 var criteria;
