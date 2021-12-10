@@ -33,57 +33,68 @@ function subtractRow() {
     document.getElementById("inputTable").removeChild(lastRow);
 }
 
-function sendToCalculate( alternatives, matrix ) {
+function sendToCalculate(matrix) {
 
-    fetch('/calculate', {
+    fetch('/addCriteriaComparation', {
         method: "POST",
-        headers: { 
+        headers: {
             'Content-Type': 'application/json;charset=UTF-8'
         },
         body: JSON.stringify({
-            alternatives: alternatives,
             matrix: matrix
         })
     }).then(response => window.location.href = response.url);
 }
 
 function sendValues() {
-    var alternatives = Array.from(
-        document.querySelectorAll("#default-row > td > input")
-    ).map(td => td.value).slice(1);
-
     var matrix = [];
 
-    if( alternatives.filter(a => a.length == 0).length > 0 ) {
-        alert("You have to fill the alternatives!");
-        return;
-    }
-    
     matrix = Array.from(
         document.querySelectorAll("#inputTable tr")
     ).slice(1)
-    .map(tr => Array
-        .from(tr.childNodes)
-        .slice(2)
-        .map(td => td.firstChild)
-        .filter(td => !!td)
-        .map(input => input.value)
+        .map(tr => Array.from(
+            tr.children
+        ).splice(1).map(td => td.children[0].value)
+        );
+
+    sendToCalculate(matrix);
+}
+
+function symmetricAutocompletionInit() {
+    inputMatrix = Array.from(
+        document.querySelectorAll("#inputTable tr")
+    ).slice(1)
+        .map(tr => Array.from(
+            tr.children
+        ).splice(1).map(td => td.lastChild)
     );
 
-    sendToCalculate( alternatives, matrix );
+    for (let i = 0; i < inputMatrix.length; i++)
+        inputMatrix[i][i].value = 1;
+
+    for (let y = 0; y < inputMatrix.length; y++) {
+        for (let x = 0; x < inputMatrix.length; x++) {
+
+            inputMatrix[y][x].addEventListener(
+                'input', e => inputMatrix[x][y].value = 1/parseFloat(e.target.value)
+            );
+        }
+    }
 }
 
 window.onload = () => {
-    
-    document.getElementById("add").onclick = () => {
-        addColumn();
-        addRow();
-    };
 
-    document.getElementById("subtract").onclick = () => {
-        subtractColumn();
-        subtractRow();
-    };
+    symmetricAutocompletionInit();
+
+    // document.getElementById("add").onclick = () => {
+    //     addColumn();
+    //     addRow();
+    // };
+
+    // document.getElementById("subtract").onclick = () => {
+    //     subtractColumn();
+    //     subtractRow();
+    // };
 
     document.getElementById('submit').onclick = sendValues;
 };

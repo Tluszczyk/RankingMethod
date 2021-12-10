@@ -29,34 +29,69 @@ def ranking_dict(CompMatrix, alternatives):
     ranking = dict(zip(alternatives, ranking_vec))
     return dict(sorted(ranking.items(), key=lambda x: x[1], reverse=True))
 
+def multi_criterion_ranking_dict(CompMatrices, CritCompMatrix, alternatives, criteria):
+    res = {alt: 0 for alt in alternatives}
 
-matrix_s = sys.argv[1]
-alternatives_s = sys.argv[2]
+    criteria_ranking_dict = ranking_dict(CritCompMatrix, criteria)
 
-# matrix_s = "1,0.66,2,1.5,1,2,0.5,0.5,1"
-# alternatives_s = "UJ,AGH,PWR"
+    for i, criterium in enumerate(criteria):
+        rank_for_crit = ranking_dict(CompMatrices[i], alternatives)
+
+        for alt in alternatives:
+            res[alt] += rank_for_crit[alt] * criteria_ranking_dict[criterium]
+
+    return res
+
+# examples
+alternatives_s = "1,2,3"
+criteria_s = "a,b,c"
+comparations_s = "\
+1,1,1,\
+1,1,1,\
+1,1,1,\
+\
+1,1,2,\
+1,1,3,\
+.5,.33,1,\
+\
+1,4,5,\
+.25,1,6,\
+.2,.166,1"
+
+criteriaComparations_s = "\
+1,2,2,\
+.5,1,2,\
+.5,.5,1\
+"
+
+# input from parent process
+alternatives_s, criteria_s, comparations_s, criteriaComparations_s = sys.argv[1:5]
+
+
+# data preprocessing String -> [[[Float]]]
 
 alternatives = alternatives_s.split(',')
+criteria = criteria_s.split(',')
 
 N = len(alternatives)
 
-matrix = np.reshape(
-    list(
-        map(
-            lambda x: float(x),
-            matrix_s.split(',')
-        )
-    ),
-    (N, N)
+comparations = np.reshape(
+    list(map(float, comparations_s.split(','))),
+    (len(criteria),N,N)
 ).tolist()
 
-# ranking_str = ""
+criteriaComparations = np.reshape(
+    list(map(float, criteriaComparations_s.split(','))),
+    (len(criteria),len(criteria))
+).tolist()
 
-# rank = ranking_dict(matrix, alternatives)
-# for key in sorted(rank, key=lambda e: e[1]):
-#     ranking_str += key + ":" + str(rank[key]) + ","
+# building ranking from many criteria
+final_ranking_dict = multi_criterion_ranking_dict(
+    comparations,
+    criteriaComparations,
+    alternatives,
+    criteria
+)
 
-# print(ranking_str[:-1])
-
-print(ranking_dict(matrix, alternatives))
+print(final_ranking_dict)
 sys.stdout.flush()
