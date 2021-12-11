@@ -2,14 +2,20 @@ import numpy as np
 import numpy.linalg as la
 
 
-def ranking_dict(CompMatrix, alternatives):
+def ranking_dict(compMatrix, alternatives):
     """
     Calculates the ranking for alternatives based on given comparison matrix CompMatrix
-    returns: ranking dictionary
+
+    ### Parameters
+    CompMatrix: Comparison matrix provided by expert
+    alternatives: list of possible alternatives
+
+    ### Returns
+    result: ranking dictionary
     """
 
     # w, v are eigenvalues, eigenvectors accordingly
-    w, v = la.eig(CompMatrix)
+    w, v = la.eig(compMatrix)
 
     # calculates the normalised ranking vector
     ranking_vec = v[:, np.argmax(w)]

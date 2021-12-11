@@ -17,7 +17,7 @@ def random_CP(n):
 def clear_dir(path):
     for file in os.listdir(path):
         file_path = os.path.join(path, file)
-        print(file_path)
+        os.remove(file_path)
     pass
 
 
