@@ -29,6 +29,7 @@ def ranking_dict(CompMatrix, alternatives):
     ranking = dict(zip(alternatives, ranking_vec))
     return dict(sorted(ranking.items(), key=lambda x: x[1], reverse=True))
 
+
 def multi_criterion_ranking_dict(CompMatrices, CritCompMatrix, alternatives, criteria):
     res = {alt: 0 for alt in alternatives}
 
