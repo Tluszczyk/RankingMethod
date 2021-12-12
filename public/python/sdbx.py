@@ -1,4 +1,6 @@
 import numpy as np
+from numpy.core.fromnumeric import prod
+from groupRanking import ranking_dict, fill_missing_evm
 
 def random_CP(n):
     CP = np.random.rand(n, n)
@@ -12,5 +14,14 @@ def random_CP(n):
 
 
 if __name__ == "__main__":
-    print(pow(8, 1 / 5))
+    CP = np.array([
+        [1., 2/3, 0., 0., 9],
+        [3/2, 1., 0., 7/4, 0.],
+        [0., 0., 1, 0., 1/3],
+        [0., 4/7, 0., 1., 9.],
+        [1/9, 0., 3., 1/9, 1.]
+    ])
+
+    print(ranking_dict(CP, ["a", "b", "c", "d", "e"], method="evm"))
+    
     

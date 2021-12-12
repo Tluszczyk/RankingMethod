@@ -1,6 +1,5 @@
 import numpy as np
 import os
-import shutil
 
 
 def random_CP(n):
@@ -13,7 +12,7 @@ def random_CP(n):
 
     return CP
 
-# TODO write fun that clears 'matrices' directory
+
 def clear_dir(path):
     for file in os.listdir(path):
         file_path = os.path.join(path, file)
@@ -35,7 +34,6 @@ def generate_CPs(no_alternatives, criteria, no_experts):
 
 
 if __name__ == "__main__":
-    # confirm = input("Do you really want to generate random matrices? [y/n]\n")
-    # if confirm == "y":
-    #     generate_CPs(3, ["size", "design", "speed"], 4)
-    clear_dir("public\\python\\matrices")
+    confirm = input("Do you really want to generate random matrices? [y/n]\n")
+    if confirm == "y":
+        generate_CPs(3, ["size", "design", "speed"], 4)
