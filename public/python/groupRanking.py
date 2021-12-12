@@ -1,5 +1,5 @@
 import numpy as np
-from numpy.core.fromnumeric import prod
+from math import prod
 import numpy.linalg as la
 import math
 
@@ -112,6 +112,47 @@ def multi_criterion_ranking_dict(CompMatrices, CritCompMatrix, alternatives, cri
             res[alt] += rank_for_crit[alt] * criteria_ranking_dict[criterium]  # czemu nie res[alt] = ...? 
 
     return res
+
+
+def agregate_judgments(no_experts, alternatives, criteria, method="evm", mean="arithmetic"):
+    """
+    Calculates ranking based on aggregation of individual judgments (AIJ)
+
+    ### Parameters
+    no_experts: number of experts that had been surveed
+    alternatives: list of possible alternatives
+    criteria: list of criteria in respect to which we calculate ranking
+    method: method of ranking calculation, 'evm' or 'gmm'
+    mean: the type of mean applied in agregation (arithmetic or geometric), arithmetic by default
+
+    ### Returns
+    result: dictionary representing ranking, sorted in descending order
+    """
+
+    CPs = {c: [
+        np.load(f"public\\python\\matrices\\{c}_exp{exp}.npy") for exp in range(1, no_experts)
+    ] for c in criteria}
+    priorities = [
+        np.load(f"public\\python\\matrices\\priorities_exp{exp}.npy") for exp in range(1, no_experts)
+    ]
+
+    agregatedCPs = [
+        prod(matrices, start=np.ones((len(alternatives), len(alternatives)))) for matrices in CPs.values()
+    ]
+    agregatedCPs = [pow(agregatedCPs[i], 1 / no_experts) for i in range(len(criteria))]
+    agregatedPriorities = prod(priorities, start=np.ones((len(alternatives), len(alternatives))))
+    agregatedPriorities = pow(agregatedPriorities, 1 / no_experts)
+
+    final_ranking = multi_criterion_ranking_dict(
+        agregatedCPs, 
+        agregatedPriorities,
+        alternatives,
+        criteria,
+        method
+    )
+
+    return dict(sorted(final_ranking.items(), key=lambda it: it[1], reverse=True))
+
 
 def agregate_priorities(no_experts, alternatives, criteria, method="evm", mean="arithmetic"):
     """

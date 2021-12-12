@@ -1,3 +1,4 @@
+from math import prod
 import numpy as np
 import os
 
@@ -34,6 +35,14 @@ def generate_CPs(no_alternatives, criteria, no_experts):
 
 
 if __name__ == "__main__":
-    confirm = input("Do you really want to generate random matrices? [y/n]\n")
-    if confirm == "y":
-        generate_CPs(3, ["size", "design", "speed"], 4)
+    # confirm = input("Do you really want to generate random matrices? [y/n]\n")
+    # if confirm == "y":
+    #     generate_CPs(3, ["size", "design", "speed"], 4)
+
+    matrices = [random_CP(3) for _ in range(4)]
+    for m in matrices:
+        print(m)
+    print("and now the sum:")
+    matsum = prod(matrices, start=np.ones((3, 3)))
+    print(matsum)
+    print(pow(matsum, 1 / 4))
