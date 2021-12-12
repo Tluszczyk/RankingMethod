@@ -66,7 +66,7 @@ criteriaComparations_s = "\
 
 # input from parent process
 alternatives_s, criteria_s, comparations_s, criteriaComparations_s = sys.argv[1:5]
-
+# filename = sys.argv[1]
 
 # data preprocessing String -> [[[Float]]]
 

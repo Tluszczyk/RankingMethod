@@ -33,6 +33,18 @@ function calculate(req, res) {
 
     console.log("Calculating...");
 
+    // fs.writeFileSync('public/data/comparationData.txt',
+    //     String(alternatives) + "\n" +
+    //     String(criteria) + "\n" +
+    //     String(comparations) + "\n" +
+    //     String(criteriaComparations)
+    // );
+
+    // var calculatingRankingProcess = spawn('python3', [
+    //     'public/python/calculatingRanking.py',
+    //     'public/data/comparationData.txt'
+    // ]);
+
     var calculatingRankingProcess = spawn('python3', [
         'public/python/calculatingRanking.py',
         alternatives,
@@ -43,9 +55,10 @@ function calculate(req, res) {
 
     calculatingRankingProcess.stdout.on('data', data => {
         RANKING = JSON.parse(String(data).replace(/'/g, '"'));
+
         res.redirect('/ranking');
     });
-    res.redirect('/');
+    // res.redirect('/');
 };
 
 var criteria;
