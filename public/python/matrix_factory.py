@@ -22,27 +22,22 @@ def clear_dir(path):
 
 
 def generate_CPs(no_alternatives, criteria, no_experts):
+    sep = os.sep
     names = [[f"{c}_exp{exp}" for exp in range(1, no_experts + 1)] for c in criteria]
     names = [n for c in names for n in c]
-    clear_dir("public\\python\\matrices")
+    clear_dir(f"public{sep}python{sep}matrices")
 
     for n in names:
-        np.save(f"public\\python\\matrices\\{n}.npy", random_CP(no_alternatives))
+        np.savetxt(f"public{sep}python{sep}matrices{sep}{n}.txt", random_CP(no_alternatives))
     
     for exp in range(1, no_experts + 1):
-        np.save(f"public\\python\\matrices\\priorities_exp{exp}.npy", random_CP(len(criteria)))
+        np.savetxt(f"public{sep}python{sep}matrices{sep}priorities_exp{exp}.txt", random_CP(len(criteria)))
     
 
 
 if __name__ == "__main__":
-    # confirm = input("Do you really want to generate random matrices? [y/n]\n")
-    # if confirm == "y":
-    #     generate_CPs(3, ["size", "design", "speed"], 4)
+    confirm = input("Do you really want to generate random matrices? [y/n]\n")
+    if confirm == "y":
+        generate_CPs(3, ["size", "design", "speed"], 4)
 
-    matrices = [random_CP(3) for _ in range(4)]
-    for m in matrices:
-        print(m)
-    print("and now the sum:")
-    matsum = prod(matrices, start=np.ones((3, 3)))
-    print(matsum)
-    print(pow(matsum, 1 / 4))
+    

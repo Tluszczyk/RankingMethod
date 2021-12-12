@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.core.fromnumeric import prod
 from groupRanking import ranking_dict, fill_missing_evm
+import os
 
 def random_CP(n):
     CP = np.random.rand(n, n)
@@ -22,6 +23,7 @@ if __name__ == "__main__":
         [1/9, 0., 3., 1/9, 1.]
     ])
 
-    print(ranking_dict(CP, ["a", "b", "c", "d", "e"], method="evm"))
+    print(ranking_dict(CP, ["a", "b", "c", "d", "e"], method="gm"))
+    print(os.sep)
     
     

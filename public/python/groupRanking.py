@@ -2,6 +2,7 @@ import numpy as np
 from math import prod
 import numpy.linalg as la
 import math
+import os
 
 
 def fill_missing_evm(cp):
@@ -24,7 +25,7 @@ def ranking_vector_gmm(cp):
     n = cp.shape[0]
     ranking_vec = [0 for _ in range(n)]
     for i in range(len(ranking_vec)):
-        ranking_vec[i] = pow(prod(cp[i, :]), 1 / len(n))
+        ranking_vec[i] = pow(prod(cp[i, :]), 1 / n)
     return ranking_vec
 
 
@@ -87,7 +88,6 @@ def ranking_dict(compMatrix, alternatives, method="evm"):
     else:                   # Geometric mean method
 
         if compMatrix.__contains__(0):      # case of incomplete matrix
-            print("incomplete gmm")
             ranking_vec = ranking_vector_gmm_incomplete(compMatrix)
         else:                               # case of complete matrix
             ranking_vec = ranking_vector_gmm(compMatrix)
@@ -129,11 +129,13 @@ def agregate_judgments(no_experts, alternatives, criteria, method="evm", mean="a
     result: dictionary representing ranking, sorted in descending order
     """
 
+    sep = os.sep
+    
     CPs = {c: [
-        np.load(f"public\\python\\matrices\\{c}_exp{exp}.npy") for exp in range(1, no_experts)
+        np.loadtxt(f"public{sep}python{sep}matrices{sep}{c}_exp{exp}.txt") for exp in range(1, no_experts)
     ] for c in criteria}
     priorities = [
-        np.load(f"public\\python\\matrices\\priorities_exp{exp}.npy") for exp in range(1, no_experts)
+        np.loadtxt(f"public{sep}python{sep}matrices{sep}priorities_exp{exp}.txt") for exp in range(1, no_experts)
     ]
 
     agregatedCPs = [
@@ -169,15 +171,17 @@ def agregate_priorities(no_experts, alternatives, criteria, method="evm", mean="
     result: dictionary representing ranking, sorted in descending order
     """
 
+    sep = os.sep
+
     # Dictionary of 'expert index' -> 'comparison matrices list' pairs
     CPs = {exp: [
-        np.load(f"public\\python\\matrices\\{c}_exp{exp}.npy") for c in criteria
+        np.loadtxt(f"public{sep}python{sep}matrices{sep}{c}_exp{exp}.txt") for c in criteria
     ] for exp in range(1, no_experts + 1)}
 
     # list of rankings from every expert
     judgments = {exp: multi_criterion_ranking_dict(
         CPs[exp], 
-        np.load(f"public\\python\\matrices\\priorities_exp{exp}.npy"),
+        np.loadtxt(f"public{sep}python{sep}matrices{sep}priorities_exp{exp}.txt"),
         alternatives,
         criteria,
         method=method
@@ -209,6 +213,6 @@ if __name__ == "__main__":
     no_exp = 4
     criterias = ["size", "design", "speed"]
     cars = ["lambo", "ferrari", "porshe"]
-    ranking = agregate_priorities(no_exp, cars, criterias)
+    ranking = agregate_priorities(no_exp, cars, criterias, method="gmm")
     print(ranking)
     print(sum(ranking.values()))
