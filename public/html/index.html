@@ -4,6 +4,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="css/index.css">
 
     <title>Ranking Method</title>
@@ -45,6 +49,17 @@
                 <button class="addButton" type="button">+</button>
                 <button class="subButton" type="button">-</button>
             </div>
+        </div>
+
+        <div>
+            <label for="method">Method</label>
+            <select name="method" id="method">
+                <option value="evm">Eigenvectors</option>
+                <option value="gmm">Geometric</option>
+            </select><br>
+
+            <label for="expertsNum">Number of experts</label>
+            <input name="expertsNum" id="expertsNum" type="text" placeholder="enter number of experts..">
         </div>
 
         <button type="button" id="submitButton">Submit</button>
