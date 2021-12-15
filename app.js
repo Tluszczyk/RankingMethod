@@ -5,6 +5,8 @@ const path = require('path');
 const pug = require('pug');
 const fs = require('fs');
 
+const zip = (a, b) => a.map((k, i) => [k, b[i]]);
+
 const port = process.env.PORT || 3000;
 
 var app = express();
@@ -37,22 +39,41 @@ function calculate(req, res) {
         'public/python/calculatingRanking.py',
         alternatives,
         criteria,
-        comparations,
-        criteriaComparations
+        method,
+        expertsNum,
     ]);
 
     calculatingRankingProcess.stdout.on('data', data => {
+        // console.log(data);
         RANKING = JSON.parse(String(data).replace(/'/g, '"'));
         res.redirect('/ranking');
     });
-    res.redirect('/');
 };
 
-var criteria;
-var alternatives;
+var criteria = [];
+var method;
+var expertsNum;
+var expertsLeft;
+var criteriaLeft;
+var alternatives = [];
 var comparations = [];
 var criteriaComparations;
-var comparedCriteria = false;
+
+function saveComparationsToFile() {
+    zip(criteria, comparations).forEach(pair => {
+        let [criterion, comparation] = pair;
+
+        fs.writeFileSync(
+            "public/python/matrices/"+criterion+"_exp"+(expertsNum-expertsLeft+1)+".txt", 
+            comparation.reduce((x, y) => x + '\n' + y).replace(/,/g, ' ')
+        );
+    });
+
+    fs.writeFileSync(
+        "public/python/matrices/"+"priorities_exp" + (expertsNum - expertsLeft+1) + ".txt",
+        criteriaComparations.reduce((x, y) => x + '\n' + y).replace(/,/g, ' ')
+    );
+}
 
 app.post('/addCriteriumData', (req, res) => {
     comparations.push(req.body.matrix);
@@ -61,41 +82,64 @@ app.post('/addCriteriumData', (req, res) => {
 
 app.post('/addCriteriaComparation', (req, res) => {
     criteriaComparations = req.body.matrix;
-    calculate(req, res);
+    saveComparationsToFile();
+
+    res.redirect('/getAllExperts');
 })
 
-var missCall = true;
+var missCallComp = true;
 app.get('/getAllComparations', (req, res) => {
-    if (missCall) {
-        missCall = false;
+    if (missCallComp) {
+        missCallComp = false;
         criteriaLeft++;
 
-    } else missCall = true;
+    } else missCallComp = true;
 
     if( criteriaLeft == 0 ) {
-        if( comparedCriteria ) {
-
-        } else res.send(pug.renderFile(
+        res.send(pug.renderFile(
             'public/pug/compareCriteria.pug', {
-                alternatives: criteria
-            }
-        ));
+            expertNum: expertsNum - expertsLeft + 1,
+            alternatives: criteria
+        }));
 
     } else res.send(pug.renderFile(
             'public/pug/inputCriterium.pug', {
+            expertNum: expertsNum - expertsLeft + 1,
             criterium: criteria[criteria.length - (criteriaLeft--)],
             alternatives: alternatives
         })
     );
 });
 
+var missCallExp = true;
+app.get('/getAllExperts', (req, res) => {
+    if (missCallExp) {
+        missCallExp = false;
+        expertsLeft++;
+
+    } else {
+        missCallExp = true;
+
+        criteriaLeft = criteria.length;
+        comparations = [];
+    }
+
+    if (--expertsLeft == 0) {
+        calculate(req, res);
+
+    } else res.redirect('/getAllComparations');
+});
+
 app.post('/processCriteriaAndAlternatives', (req, res) => {
     criteria = req.body.criteria;
     alternatives = req.body.alternatives;
+    method = req.body.method;
+    expertsNum = req.body.expertsNum;
 
     criteriaLeft = criteria.length;
+    expertsLeft = expertsNum;
 
-    res.redirect("/getAllComparations");
+    res.redirect("/getAllExperts");
 });
 
 app.listen(port, () => {

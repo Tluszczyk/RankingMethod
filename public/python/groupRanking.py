@@ -49,7 +49,7 @@ def ranking_vector_gmm_incomplete(cp):
     r = np.array(r)
     ranking_exp = la.solve(cp, r)
     return [math.exp(w) for w in ranking_exp]
-    
+
 
 def ranking_dict(compMatrix, alternatives, method="evm"):
     """
@@ -67,7 +67,7 @@ def ranking_dict(compMatrix, alternatives, method="evm"):
 
     # cast comparison matrix to np.array()
     if (type(compMatrix) == type([])):
-            compMatrix = np.array(compMatrix)
+        compMatrix = np.array(compMatrix)
 
     if method == "evm":     # Eigenvector method
 
@@ -109,7 +109,7 @@ def multi_criterion_ranking_dict(CompMatrices, CritCompMatrix, alternatives, cri
         rank_for_crit = ranking_dict(CompMatrices[i], alternatives, method=method)
 
         for alt in alternatives:
-            res[alt] += rank_for_crit[alt] * criteria_ranking_dict[criterium]  # czemu nie res[alt] = ...? 
+            res[alt] += rank_for_crit[alt] * criteria_ranking_dict[criterium]  # czemu nie res[alt] = ...?
 
     return res
 
@@ -130,7 +130,7 @@ def agregate_judgments(no_experts, alternatives, criteria, method="evm", mean="a
     """
 
     sep = os.sep
-    
+
     CPs = {c: [
         np.loadtxt(f"public{sep}python{sep}matrices{sep}{c}_exp{exp}.txt") for exp in range(1, no_experts)
     ] for c in criteria}
@@ -146,7 +146,7 @@ def agregate_judgments(no_experts, alternatives, criteria, method="evm", mean="a
     agregatedPriorities = pow(agregatedPriorities, 1 / no_experts)
 
     final_ranking = multi_criterion_ranking_dict(
-        agregatedCPs, 
+        agregatedCPs,
         agregatedPriorities,
         alternatives,
         criteria,
@@ -180,7 +180,7 @@ def agregate_priorities(no_experts, alternatives, criteria, method="evm", mean="
 
     # list of rankings from every expert
     judgments = {exp: multi_criterion_ranking_dict(
-        CPs[exp], 
+        CPs[exp],
         np.loadtxt(f"public{sep}python{sep}matrices{sep}priorities_exp{exp}.txt"),
         alternatives,
         criteria,
@@ -203,16 +203,23 @@ def agregate_priorities(no_experts, alternatives, criteria, method="evm", mean="
                 final_ranking[alt] *= judgments[exp][alt]
         for alt in alternatives:
             final_ranking[alt] = pow(final_ranking[alt], 1 / no_experts)
-    
+
     return dict(sorted(final_ranking.items(), key=lambda it: it[1], reverse=True))
 
 
 
 
 if __name__ == "__main__":
-    no_exp = 4
-    criterias = ["size", "design", "speed"]
-    cars = ["lambo", "ferrari", "porshe"]
-    ranking = agregate_priorities(no_exp, cars, criterias, method="gmm")
+    # no_exp = 4
+    # criterias = ["size", "design", "speed"]
+    # cars = ["lambo", "ferrari", "porshe"]
+    # ranking = agregate_priorities(no_exp, cars, criterias, method="gmm")
+    # print(ranking)
+    # print(sum(ranking.values()))
+
+    no_exp = 2
+    criterias = ['a', 'b', 'c']
+    cars = ["1", "2", "3"]
+    ranking = agregate_priorities(no_exp, cars, criterias, method="evm")
     print(ranking)
     print(sum(ranking.values()))
