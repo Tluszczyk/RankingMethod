@@ -215,4 +215,4 @@ if __name__ == "__main__":
     cars = ["lambo", "ferrari", "porshe"]
     ranking = agregate_priorities(no_exp, cars, criterias, method="gmm")
     print(ranking)
-    print(sum(ranking.values()))
+    print(f"Ranking sums to {sum(ranking.values())}")
