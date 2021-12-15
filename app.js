@@ -17,6 +17,15 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
+var criteria = [];
+var method;
+var expertsNum;
+var expertsLeft;
+var criteriaLeft;
+var alternatives = [];
+var comparations = [];
+var criteriaComparations = [];
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, "public/html/index.html"));
 });
@@ -49,15 +58,6 @@ function calculate(req, res) {
         res.redirect('/ranking');
     });
 };
-
-var criteria = [];
-var method;
-var expertsNum;
-var expertsLeft;
-var criteriaLeft;
-var alternatives = [];
-var comparations = [];
-var criteriaComparations;
 
 function saveComparationsToFile() {
     zip(criteria, comparations).forEach(pair => {
