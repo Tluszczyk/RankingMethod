@@ -4,11 +4,15 @@ html(lang="en")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
 
+        link(rel="preconnect" href="https://fonts.googleapis.com")
+        link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+        link(href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet")
+
         link(rel="stylesheet", href="css/inputCriterium.css")
 
         title #{criterium}
     body 
-        h1 Enter comparations for criterium #{criterium}
+        h1 Enter comparations for criterium #{criterium} and expert #{expertNum}
 
         #containter
             table#inputTable 
@@ -27,7 +31,7 @@ html(lang="en")
                                 input(type="text")
                             td 
                                 input(type="text")
-            //- #matrixManagement.management
+            //- #matrixManagement.management /// --- 
             //-     #add
             //-         b +
             //-     #subtract

@@ -56,7 +56,9 @@ function sendValues() {
     ).slice(1)
     .map(tr => Array.from(
             tr.children
-        ).splice(1).map(td => td.children[0].value)
+        ).splice(1)
+        .map(td => td.children[0].value)
+        .map(v => v=='' ? '0' : v)
     );
 
     sendToCalculate(matrix);

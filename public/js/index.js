@@ -49,10 +49,12 @@ function getTableData(table) {
     return tableDataCells.map(td => td.textContent);
 }
 
-function sendFormData(criteriaTable, alternativesTable) {
+function sendFormData(criteriaTable, alternativesTable, methodSelect, expertsNumInput) {
 
     var criteriaData = getTableData(criteriaTable);
     var alternativesData = getTableData(alternativesTable);
+    var methodData = methodSelect.value;
+    var expertsNumData = expertsNumInput.value;
 
     fetch('/processCriteriaAndAlternatives', {
         method: "POST",
@@ -62,6 +64,8 @@ function sendFormData(criteriaTable, alternativesTable) {
         body: JSON.stringify({
             criteria: criteriaData,
             alternatives: alternativesData,
+            method: methodData,
+            expertsNum: expertsNumData,
         })
     }).then(response => window.location.href = response.url);
 }
@@ -69,9 +73,13 @@ function sendFormData(criteriaTable, alternativesTable) {
 (function() {
     var criteriaTable = document.getElementById("criteriaTable");
     var alternativesTable = document.getElementById("alternativesTable");
+    var methodSelect = document.getElementById("method");
+    var expertsNumInput = document.getElementById("expertsNum");
 
     attachButtons(criteriaTable, "criteriaDiv", "criterionInput");
     attachButtons(alternativesTable, "alternativesDiv", "alternativeInput");
 
-    document.getElementById("submitButton").onclick = () => sendFormData(criteriaTable, alternativesTable);
+    document.getElementById("submitButton").onclick = () => sendFormData(
+        criteriaTable, alternativesTable, methodSelect, expertsNumInput
+    );
 })();
