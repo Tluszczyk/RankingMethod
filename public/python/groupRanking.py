@@ -1,5 +1,6 @@
 import numpy as np
 from math import prod
+from copy import copy
 import numpy.linalg as la
 import math
 import os
@@ -51,6 +52,21 @@ def ranking_vector_gmm_incomplete(cp):
     return [math.exp(w) for w in ranking_exp]
 
 
+def saatyHarkerCI(eigenvalues, n):
+    return (max(eigenvalues).astype('float') - n) / (n - 1)
+
+
+def geometricCI(cp, ranking):
+    n = cp.shape[0]
+    errors = []
+    for j in range(n):
+        for i in range(j):
+            if cp[i, j] != 0:
+                errors.append(cp[i, j] * (ranking[j] / ranking[i]))
+    errors = [math.pow(math.log(e), 2) for e in errors]
+    return sum(errors) / len(errors)
+    
+
 def ranking_dict(compMatrix, alternatives, method="evm"):
     """
     Calculates the ranking for alternatives based on given comparison matrix CompMatrix. The ranking
@@ -63,6 +79,8 @@ def ranking_dict(compMatrix, alternatives, method="evm"):
 
     ### Returns
     result: ranking dictionary
+    consistencyIndex: Consistency index calculated as Saaty-Harker CI for EVM and
+    Geometric CI for GMM
     """
 
     # cast comparison matrix to np.array()
@@ -79,6 +97,8 @@ def ranking_dict(compMatrix, alternatives, method="evm"):
 
         # calculates the normalised ranking vector
         ranking_vec = v[:, np.argmax(w)]
+        consistencyIdx = saatyHarkerCI(w, compMatrix.shape[0])
+        print("Saaty Harker CI: ", consistencyIdx)
 
         # Casts ranking vector to Real valued
         if not np.array_equal(ranking_vec, ranking_vec.astype('float')):
@@ -86,11 +106,14 @@ def ranking_dict(compMatrix, alternatives, method="evm"):
         ranking_vec = ranking_vec.astype('float')
 
     else:                   # Geometric mean method
-
+        
+        backupMatrix = copy(compMatrix)     # in case of overwriting when incomplete
         if compMatrix.__contains__(0):      # case of incomplete matrix
             ranking_vec = ranking_vector_gmm_incomplete(compMatrix)
         else:                               # case of complete matrix
             ranking_vec = ranking_vector_gmm(compMatrix)
+        consistencyIdx = geometricCI(backupMatrix, ranking_vec)
+        print("Geometric CI: ", consistencyIdx)
 
     # Softmax
     ranking_vec = ranking_vec / np.sum(ranking_vec)
