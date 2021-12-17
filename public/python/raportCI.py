@@ -49,7 +49,10 @@ def generate_raport(expertID, method):
 
     ### Parameters
     expertID: an id of the analized experts matrices
-    method: the method used to calculate consistency index
+    method: the method used to calculate consistency index, choose one from [saaty-harker, geometric, CR]
+
+    ### Returns
+    result: dictionary of criterium name - CI pairs
     """
 
     sep = os.sep
