@@ -52,11 +52,11 @@ def ranking_vector_gmm_incomplete(cp):
     return [math.exp(w) for w in ranking_exp]
 
 
-def saatyHarkerCI(eigenvalues, n):
+def saaty_harker_CI_inside(eigenvalues, n):
     return (max(eigenvalues).astype('float') - n) / (n - 1)
 
 
-def geometricCI(cp, ranking):
+def geometric_CI_inside(cp, ranking):
     n = cp.shape[0]
     errors = []
     for j in range(n):
@@ -97,8 +97,8 @@ def ranking_dict(compMatrix, alternatives, method="evm"):
 
         # calculates the normalised ranking vector
         ranking_vec = v[:, np.argmax(w)]
-        consistencyIdx = saatyHarkerCI(w, compMatrix.shape[0])
-        print("Saaty Harker CI: ", consistencyIdx)
+        # consistencyIdx = saaty_harker_CI_inside(w, compMatrix.shape[0])
+        # print("Saaty Harker CI: ", consistencyIdx)
 
         # Casts ranking vector to Real valued
         if not np.array_equal(ranking_vec, ranking_vec.astype('float')):
@@ -107,13 +107,13 @@ def ranking_dict(compMatrix, alternatives, method="evm"):
 
     else:                   # Geometric mean method
         
-        backupMatrix = copy(compMatrix)     # in case of overwriting when incomplete
+        # backupMatrix = copy(compMatrix)     # in case of overwriting when incomplete
         if compMatrix.__contains__(0):      # case of incomplete matrix
             ranking_vec = ranking_vector_gmm_incomplete(compMatrix)
         else:                               # case of complete matrix
             ranking_vec = ranking_vector_gmm(compMatrix)
-        consistencyIdx = geometricCI(backupMatrix, ranking_vec)
-        print("Geometric CI: ", consistencyIdx)
+        # consistencyIdx = geometricCI(backupMatrix, ranking_vec)
+        # print("Geometric CI: ", consistencyIdx)
 
     # Softmax
     ranking_vec = ranking_vec / np.sum(ranking_vec)

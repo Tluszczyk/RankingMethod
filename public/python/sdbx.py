@@ -23,6 +23,8 @@ if __name__ == "__main__":
         [1/9, 0., 3., 1/9, 1.]
     ])
 
-    print(ranking_dict(CP, ["a", "b", "c", "d", "e"], method="gmm"))
+    # print(ranking_dict(CP, ["a", "b", "c", "d", "e"], method="gmm"))
+    a = [1, 2, 3, 4, 5, 6]
+    print(a[:-3])
     
     

@@ -38,6 +38,6 @@ def generate_CPs(no_alternatives, criteria, no_experts):
 if __name__ == "__main__":
     confirm = input("Do you really want to generate random matrices? [y/n]\n")
     if confirm == "y":
-        generate_CPs(3, ["size", "design", "speed"], 4)
+        generate_CPs(6, ["size", "design", "speed"], 4)
 
     
