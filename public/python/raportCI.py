@@ -15,7 +15,7 @@ def saaty_harker_CI(cp):
 
 
 def consistancy_ratio(cp, q=9):
-    # Temporarly we have correct table only for q = 9
+    # TODO Temporarly we have correct table only for q = 9
     q = 9
     sep = os.sep
     cr_table = np.loadtxt(f"public{sep}python{sep}CR_table.txt")
@@ -42,7 +42,7 @@ def geometric_CI(cp):
     return sum(errors) / len(errors)
 
 
-def generate_raport(expertID, method):
+def generate_raport(expertID, method, folder="matrices"):
     """
     Generates raport file with every comparison matrix Consistency Index CI form
     individual expert
@@ -61,17 +61,17 @@ def generate_raport(expertID, method):
 
     # creating a dictinary of comparison matrix name - np.array pair
     matrices = {}
-    for root, dirs, files in os.walk(f"public{sep}python{sep}matrices"):
+    for root, dirs, files in os.walk(f"public{sep}python{sep}{folder}"):
         for f in files:
             if re.findall(regex, f):
                 matrices[f[:-sufLen]] = np.loadtxt(os.path.join(root, f))
     
     # Choose apropiate method of calculation
-    if method == "saaty-harker":
+    if method.lower() == "saaty-harker":
         indices = {k: saaty_harker_CI(matrices[k]) for k in matrices.keys()}
-    elif method == "CR":
+    elif method.lower() == "cr":
         indices = {k: consistancy_ratio(matrices[k]) for k in matrices.keys()}
-    elif method == "geometric":
+    elif method.lower() == "geometric":
         indices = {k: geometric_CI(matrices[k]) for k in matrices.keys()}
     else:
         raise ValueError(
@@ -82,6 +82,9 @@ def generate_raport(expertID, method):
 
 if __name__ == "__main__":
     print("Raport Generating Module")
-    ind = generate_raport(3, "geometric")
+    ind = generate_raport(1, "cr", folder=f"test_data{os.sep}cars")
     print(ind)
+
+    # cp = np.loadtxt("public\python\\test_data\cars\priorities_exp1.txt")
+    # print(cp)
 

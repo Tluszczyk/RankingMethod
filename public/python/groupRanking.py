@@ -137,7 +137,7 @@ def multi_criterion_ranking_dict(CompMatrices, CritCompMatrix, alternatives, cri
     return res
 
 
-def agregate_judgments(no_experts, alternatives, criteria, method="evm", mean="arithmetic"):
+def agregate_judgments(no_experts, alternatives, criteria, method="evm", mean="arithmetic", folder="matrices"):
     """
     Calculates ranking based on aggregation of individual judgments (AIJ)
 
@@ -155,10 +155,10 @@ def agregate_judgments(no_experts, alternatives, criteria, method="evm", mean="a
     sep = os.sep
 
     CPs = {c: [
-        np.loadtxt(f"public{sep}python{sep}matrices{sep}{c}_exp{exp}.txt") for exp in range(1, no_experts)
+        np.loadtxt(f"public{sep}python{sep}{folder}{sep}{c}_exp{exp}.txt") for exp in range(1, no_experts)
     ] for c in criteria}
     priorities = [
-        np.loadtxt(f"public{sep}python{sep}matrices{sep}priorities_exp{exp}.txt") for exp in range(1, no_experts)
+        np.loadtxt(f"public{sep}python{sep}{folder}{sep}priorities_exp{exp}.txt") for exp in range(1, no_experts)
     ]
 
     agregatedCPs = [
@@ -179,7 +179,7 @@ def agregate_judgments(no_experts, alternatives, criteria, method="evm", mean="a
     return dict(sorted(final_ranking.items(), key=lambda it: it[1], reverse=True))
 
 
-def agregate_priorities(no_experts, alternatives, criteria, method="evm", mean="arithmetic"):
+def agregate_priorities(no_experts, alternatives, criteria, method="evm", mean="arithmetic", folder="matrices"):
     """
     Calculates ranking based on aggregation of individual priorities (AIP)
 
@@ -198,13 +198,13 @@ def agregate_priorities(no_experts, alternatives, criteria, method="evm", mean="
 
     # Dictionary of 'expert index' -> 'comparison matrices list' pairs
     CPs = {exp: [
-        np.loadtxt(f"public{sep}python{sep}matrices{sep}{c}_exp{exp}.txt") for c in criteria
+        np.loadtxt(f"public{sep}python{sep}{folder}{sep}{c}_exp{exp}.txt") for c in criteria
     ] for exp in range(1, no_experts + 1)}
 
     # list of rankings from every expert
     judgments = {exp: multi_criterion_ranking_dict(
         CPs[exp],
-        np.loadtxt(f"public{sep}python{sep}matrices{sep}priorities_exp{exp}.txt"),
+        np.loadtxt(f"public{sep}python{sep}{folder}{sep}priorities_exp{exp}.txt"),
         alternatives,
         criteria,
         method=method
