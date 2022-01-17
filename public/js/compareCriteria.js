@@ -43,7 +43,18 @@ function sendToCalculate(matrix) {
         body: JSON.stringify({
             matrix: matrix
         })
-    }).then(response => window.location.href = response.url);
+    }).then(respCrit => {
+        let res = respCrit.json();
+        res.then(obj => fetch('/confirmInconsistentData', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8'
+            },
+            body: JSON.stringify({
+                confirmed: !obj.consistent && confirm(`This matrix is inconsistent (CI = ${obj.CI}). Do you want to reenter it?`)
+            })
+        }).then(response => window.location.href = response.url));
+    });
 }
 
 function sendValues() {

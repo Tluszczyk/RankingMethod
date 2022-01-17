@@ -88,18 +88,56 @@ function saveComparationsToFile() {
     );
 }
 
-app.post('/addCriteriumData', (req, res) => {
-    comparations.push(req.body.matrix);
+function checkCICR(matrix, method, _callback) {
+    var checkingCICRProcess = spawn('python3', [
+        'public/python/calculateIndex.py',
+        matrix,
+        method
+    ]);
+
+    checkingCICRProcess.stdout.on('data', data => {
+        let [CI, CR] = String(data).split(' ');
+
+        _callback(parseFloat(CI), parseFloat(CR));
+    });
+}
+
+let _confirm_matrix_pipe;
+
+app.post('/confirmInconsistentData', (req, res) => {
+    if( req.body.confirmed ) {
+        if (!comparingCriteria) criteriaLeft++;
+    } else {
+        if (comparingCriteria) {
+            saveComparationsToFile();
+            res.redirect('/getAllExperts');
+        } else comparations.push(_confirm_matrix_pipe);
+    }
+    
     res.redirect('/getAllComparations');
 });
 
-app.post('/addCriteriaComparation', (req, res) => {
-    criteriaComparations = req.body.matrix;
-    saveComparationsToFile();
+app.post('/addCriteriumData', (req, res) => {
+    let matrix = req.body.matrix;
+    _confirm_matrix_pipe = matrix;
 
-    res.redirect('/getAllExperts');
+    checkCICR(matrix, method, (CI, CR) => {
+        res.send({ CI: CI, CR: CR, consistent: CI <= 0.1 });
+    });
+});
+
+app.post('/addCriteriaComparation', (req, res) => {
+    let matrix = req.body.matrix;
+
+    _confirm_matrix_pipe = matrix;
+    criteriaComparations = matrix;
+    
+    checkCICR(matrix, method, (CI, CR) => {
+        res.send({ CI: CI, CR: CR, consistent: CI <= 0.1 });
+    });
 })
 
+var comparingCriteria = false;
 var missCallComp = true;
 app.get('/getAllComparations', (req, res) => {
     if (missCallComp) {
@@ -109,19 +147,23 @@ app.get('/getAllComparations', (req, res) => {
     } else missCallComp = true;
 
     if( criteriaLeft == 0 ) {
+        comparingCriteria = true;
+
         res.send(pug.renderFile(
             'public/pug/compareCriteria.pug', {
             expertNum: expertsNum - expertsLeft + 1,
             alternatives: criteria
         }));
 
-    } else res.send(pug.renderFile(
+    } else {
+        comparingCriteria = false;
+        res.send(pug.renderFile(
             'public/pug/inputCriterium.pug', {
             expertNum: expertsNum - expertsLeft + 1,
             criterium: criteria[criteria.length - (criteriaLeft--)],
             alternatives: alternatives
-        })
-    );
+        }));
+    }
 });
 
 var missCallExp = true;

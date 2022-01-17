@@ -1,7 +1,7 @@
 import numpy as np
-from math import prod
 from copy import copy
 import numpy.linalg as la
+from math import prod
 import math
 import os
 

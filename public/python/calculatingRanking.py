@@ -1,8 +1,5 @@
 import sys
 
-import numpy as np
-import numpy.linalg as la
-
 from functools import reduce
 
 from groupRanking import *
