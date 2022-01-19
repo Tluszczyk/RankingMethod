@@ -122,7 +122,7 @@ app.post('/addCriteriumData', (req, res) => {
     _confirm_matrix_pipe = matrix;
 
     checkCICR(matrix, method, (CI, CR) => {
-        res.send({ CI: CI, CR: CR, consistent: CI <= 0.1 });
+        res.send({ CI: CI, CR: CR, consistent: false});//CI <= 0.1 });
     });
 });
 
@@ -133,7 +133,7 @@ app.post('/addCriteriaComparation', (req, res) => {
     criteriaComparations = matrix;
     
     checkCICR(matrix, method, (CI, CR) => {
-        res.send({ CI: CI, CR: CR, consistent: CI <= 0.1 });
+        res.send({ CI: CI, CR: CR, consistent: false });//CI <= 0.1 });
     });
 })
 

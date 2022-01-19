@@ -53,7 +53,7 @@ function sendToCalculate(matrix) {
                 'Content-Type': 'application/json;charset=UTF-8'
             },
             body: JSON.stringify({
-                confirmed: !obj.consistent && confirm(`This matrix is inconsistent (CI = ${obj.CI}). Do you want to reenter it?`)
+                confirmed: !obj.consistent && confirm(`This matrix is has CI = ${obj.CI}. Do you want to proceed?`)
             })
         }).then(respConfirm => window.location.href = respConfirm.url));
     }
