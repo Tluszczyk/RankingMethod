@@ -11,10 +11,8 @@ Aplikacja z interfejsem graficznym licząca wielokryterialny i wieloekspertowy r
 * Wsparcie dla weryfikacji niespójności. Dla metody GMM wyliczany jest *geometryczny indeks niespójności* (GCI), z kolei dla metody EVM wyliczany jest zarówno *indeks niespójności Saaty-Harker* jak i *consistency ratio*
 
 ## Architektura aplikacji
-1. Applikacja
-    a. Python, biblioteka numpy
-2. GUI
-    a. HTML/CSS/JS, biblioteki Node.js, Pug.js. GUI odpala proces z programem pythonowym aplikacji
+1. Applikacja -> Python, biblioteka numpy
+2. GUI -> HTML/CSS/JS, biblioteki Node.js, Pug.js. GUI odpala proces z programem pythonowym aplikacji
 
 
 ## Pierwsze uruchomienie
