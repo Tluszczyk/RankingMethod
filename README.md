@@ -12,9 +12,9 @@ Aplikacja z interfejsem graficznym licząca wielokryterialny i wieloekspertowy r
 
 ## Architektura aplikacji
 1. Applikacja
- 1.a Python, biblioteka numpy
+    a. Python, biblioteka numpy
 2. GUI
- 2.a HTML/CSS/JS, biblioteki Node.js, Pug.js. GUI odpala proces z programem pythonowym aplikacji
+    a. HTML/CSS/JS, biblioteki Node.js, Pug.js. GUI odpala proces z programem pythonowym aplikacji
 
 
 ## Pierwsze uruchomienie
